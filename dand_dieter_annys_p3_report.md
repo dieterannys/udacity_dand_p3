@@ -230,7 +230,7 @@ mono11      7612
 
 I placed these numbers on a graph (to be found in the code notebook), which shows user carciofo spiking at the beginning, with the rest of contribution counts tapering off.
 
-![User Contribution Count Graph]('name_count.png)
+![User Contribution Count Graph](name_count.png)
 
 Counting the total amount of contrinutions:
 ```
@@ -295,14 +295,43 @@ school      92
 fast_food   76
 ```
 
+## Observations, Ideas & Improvements
 
-## Observations, Ideas, Improvements
+Having observed the dataset, I have thought of some possible improvements and ideas, both in generation of the dataset, as in the analysis.
 
-After investigating the dataset, I can conclude it is obviously not perfect
-
+A few observations about the dataset:
 - There are a lot of tags that might be more useful if they were more consistently applied, such as social media tags (facebook, twitter), several fuel types seem to be indicated in only one place in the city (which I find unlikely but could be close to the truth)
 - There are several keys that mean the same thing, but are named differently. More consistent choices could be made with these as well.
 - When reviewing my submission and the output values, I found a million places more where I could clean. For example the tag types 'tiger' or 'is_in' could all be checked if they can't be replaced by 'addr', etc. Lesson learned is how important validation is when inputting data in the first place. The big one in this case is street names missing the street type, which would require cross-referencing lat-lon positions with streets in a source like Google Maps.
+
+These can be remedied mainly in two points of the dataset's lifecycle: during data entry, and during analysis
+
+- Issue of tags not being applied often enough, many tags indicating the same thing but having different key names, or values not being valid: measures could be taken so that the data entry process is more rigid, values are validated more strictly, and often-used tags are mandatory or at least suggested.
+    - Benefits
+        - Cleaner data from the get go
+        - Incorrect values would not lie lurking in the dataset until an analyst corrects them. Especially in this dataset, it is obvious a lot of incomplete or oddly formatted data slips through.
+        - If e.g. adding whether or not a restaurant had free wifi was suggested by the system, it would take the pressure off the author for coming up with all possible properties to add. This in turn would make people trust the dataset more as a source of, in this case, where to find internet access.
+    - Anticipated issues
+        - For a framework that is supposed to be able to accept data from all around the world with all its nuances, it can never be made too rigid. Else the risk is not accepting data that is actually valid but not anticipated by the developers.
+        - Sort of in line with the previous point, it would make the system less flexible, and it would become less likely that certain tags start occuring often organically.
+        - It would need a lot more centralized oversight to ensure all rules in place are strict enough, but not too strict. The idea is still that this is a community project.
+- During analysis, tag types and keys could be checked more thoroughly for values that fall in the same category (such as tiger, addr and is_in), and measures could be taken to choose one single keyname for the same type of values.
+    - Benefits
+        - This makes the numbers a lot more meaningful, if we query for specific keys. If 80% of your streets are of type 'addr' and the rest of type 'is_in', we risk underestimating the amount of streets in reality
+        - It makes searching in general easier, both internally and for the user, who gets 100% of the answers when checking a tag key.
+    - Anticipated issues
+        - The analyst may overlook nuances in the meaning of the tag keys, because values appear to be of the same type, causing the data to lose depth in the cleaning process.
+        - Decisions need to be made what exactly we are interested in in the dataset. Without clear questions or specific interests, the data could be cross-checked and corrected ad infinitum.
+- During analysis, code could be implemented that compares tags under the same node or way, which is something I currently haven't done. For example, I split addr:full into addr:street and addr:housnumber, but it could well be that an addr:housenumber is already defined which is possibly inconsistent with the one that was in the full address value. A second part would be to identify holes in the data, e.g. nodes that have a street, but no number.
+    - Benefits
+        - At the very least identify where the holes and inconsistencies lie, making room for making corrections afterwards.
+    - Anticipated issues
+        - Knowing where the holes are, does not necessarily help us answer our questions without filling the gaps.
+        - The obvious issue is where to find the gold standard, short of walking to the location containing inconsistencies and checking yourself, correcting the data manually.
+        - Decision needs to be made what the benefit is of identifying the holes in the data, since a lot of these would need to be filled on a one-by-one basis. This might not be worth the investment.
+        
+
+
 
 ---
 ## References
